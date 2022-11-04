@@ -1,0 +1,175 @@
+{
+  "name": "tiny-wiki",
+  "displayName": "tiny-wiki",
+  "description": "a simple yet powerful wiki for vscode",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.73.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./dist/extension.js",
+  "browser": "./dist/extension-web.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "tiny-wiki.addWikiPage",
+        "title": "Add Page",
+        "category": "tiny-wiki",
+        "icon": "$(add)"
+      },
+      {
+        "command": "tiny-wiki.deleteWikiPage",
+        "title": "Delete Page",
+        "category": "tiny-wiki"
+      },
+      {
+        "command": "tiny-wiki.openTodayPage",
+        "title": "Open Today Page",
+        "category": "tiny-wiki",
+        "icon": "$(calendar)"
+      },
+      {
+        "command": "tiny-wiki.refreshWiki",
+        "title": "Refresh",
+        "category": "tiny-wiki",
+        "icon": "$(refresh)"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "tiny-wiki.addWikiPage",
+          "when": "tiny-wiki:isWikiWorkspace"
+        },
+        {
+          "command": "tiny-wiki.deleteWikiPage",
+          "when": "false"
+        },
+        {
+          "command": "tiny-wiki.openTodayPage",
+          "when": "tiny-wiki:isWikiWorkspace"
+        },
+        {
+          "command": "tiny-wiki.refreshWiki",
+          "when": "tiny-wiki:isWikiWorkspace"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "tiny-wiki.refreshWiki",
+          "when": "view == tiny-wiki.wiki",
+          "group": "navigation@1"
+        },
+        {
+          "command": "tiny-wiki.openTodayPage",
+          "when": "view == tiny-wiki.wiki",
+          "group": "navigation@2"
+        },
+        {
+          "command": "tiny-wiki.addWikiPage",
+          "when": "view == tiny-wiki.wiki",
+          "group": "navigation@3"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "tiny-wiki.addWikiPage",
+          "when": "viewItem == tiny-wiki.directory",
+          "group": "inline@1"
+        },
+        {
+          "command": "tiny-wiki.addWikiPage",
+          "when": "viewItem == tiny-wiki.directory",
+          "group": "basic@1"
+        },
+        {
+          "command": "tiny-wiki.deleteWikiPage",
+          "when": "viewItem == tiny-wiki.page",
+          "group": "basic@1"
+        }
+      ]
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "tiny-wiki.wiki",
+          "name": "Wiki",
+          "when": "tiny-wiki:isWikiWorkspace"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "tiny-wiki",
+      "properties": {
+        "tiny-wiki.enabled": {
+          "default": true,
+          "type": "boolean",
+          "description": "Specifies whether to enable the wiki for the current workspace."
+        },
+        "tiny-wiki.ignoredFiles": {
+          "default": [
+            "**/node_modules/**",
+            "**/.vscode/**",
+            "**/.github/**"
+          ],
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Specifies a list of file globs to ignore when processing for wiki pages."
+        },
+        "tiny-wiki.daily.directoryName": {
+          "default": "Daily",
+          "type": "string",
+          "description": "Specifies the name of the directory that daily pages are organized within."
+        },
+        "tiny-wiki.daily.titleFormat": {
+          "default": "LL",
+          "type": "string",
+          "markdownDescription": "Specifies the date format (using Moment/Day.js syntax) that is used for the title of daily pages.\n\n**Examples:** `dd/mm/yyyy`, `mm/dd/yyyy`, `yyyy/mm/dd`, `L`, `LL` ([details](https://momentjs.com/docs/#/displaying/format/))."
+        }
+      }
+    },
+    "markdown.markdownItPlugins": true
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.73.0",
+    "@types/minimatch": "^3.0.5",
+    "@types/glob": "^8.0.0",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "16.x",
+    "@typescript-eslint/eslint-plugin": "^5.42.0",
+    "@typescript-eslint/parser": "^5.42.0",
+    "eslint": "^8.26.0",
+    "glob": "^8.0.3",
+    "mocha": "^10.1.0",
+    "typescript": "^4.8.4",
+    "ts-loader": "^9.4.1",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0",
+    "@vscode/test-electron": "^2.2.0"
+  },
+  "dependencies": {
+    "markdown-it-regex": "^0.2.0",
+    "minimatch": "^3.0.4",
+    "mobx": "^6.3.2",
+    "moment": "^2.29.1",
+    "title-case": "^3.0.3"
+  }
+}
