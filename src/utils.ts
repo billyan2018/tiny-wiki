@@ -71,11 +71,25 @@ export function getUriFromLink(link: string) {
 }
 
 export function byteArrayToString(value: Uint8Array) {
-  return new TextDecoder().decode(value);
+  //return new TextDecoder().decode(value);
+  let result = '';
+  for (var i = 0; i < value.length; ++i) {
+      const byte = value[i];
+      const text = byte.toString(16);
+      result += (byte < 16 ? '%0' : '%') + text;
+  }
+  return decodeURIComponent(result);
 }
 
-export function stringToByteArray(value: string) {
-  return new TextEncoder().encode(value);
+export function stringToByteArray(value: string): Uint8Array {
+  //return new TextEncoder().encode(value);
+  const buffer = Buffer.from(value, 'utf8');
+  const result = new Uint8Array(buffer.length);
+	//const result = Array(buffer.length);
+	for (let i = 0; i < buffer.length; i++) {
+		result[i] = buffer[i];
+	}
+	return result;
 }
 
 export function withProgress<T>(title: string, action: () => Promise<T>) {

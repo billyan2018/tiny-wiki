@@ -16,6 +16,7 @@ async function createWikiPage(name: string, filePath: string) {
 `;
 
   const pageUri = Uri.joinPath(workspace.workspaceFolders![0].uri, filePath);
+  
   return workspace.fs.writeFile(pageUri, stringToByteArray(fileHeading));
 }
 
