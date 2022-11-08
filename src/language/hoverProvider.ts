@@ -6,14 +6,14 @@ import {
   Position,
   Range,
   TextDocument,
+  window,
   workspace,
 } from "vscode";
 import { findLinks, getPageFromLink, LINK_SELECTOR, retrieveParentPath } from "../utils";
 
 class LinkHoverProvider implements HoverProvider {
   public provideHover(document: TextDocument, position: Position) {
-    const currentUrl = document.uri.toString();
-    const currentPath = workspace.asRelativePath(currentUrl, false);
+    const currentPath =  '/' + workspace.asRelativePath(window.activeTextEditor!.document.uri, false); 
     const currentParent = retrieveParentPath(currentPath);
     const line = document.lineAt(position).text;
     const links = [...findLinks(line)];

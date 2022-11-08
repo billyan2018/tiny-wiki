@@ -8,11 +8,13 @@ import {
   TextDocument,
   Uri,
 } from "vscode";
+import * as vscode from "vscode";
 import { EXTENSION_NAME } from "../constants";
 import {
   findLinks,
   getPageFromLink,
   LINK_SELECTOR,
+  retrieveParentPath,
   withProgress,
 } from "../utils";
 
@@ -37,18 +39,20 @@ class WikiDocumentLinkProvider implements DocumentLinkProvider {
     });
   }
 
-  /*async resolveDocumentLink(link: WikiDocumentLink, token: CancellationToken) {
-    let page = getPageFromLink(link.title);
+  async resolveDocumentLink(link: WikiDocumentLink, token: CancellationToken) {
+    const currentPath =  '/' + vscode.workspace.asRelativePath(vscode.window.activeTextEditor!.document.uri, false); 
+    const currentParent = retrieveParentPath(currentPath);
+    let page = getPageFromLink(link.title, currentParent);
     if (!page) {
       await withProgress("Creating page...", async () =>
         commands.executeCommand(`${EXTENSION_NAME}._createWikiPage`, link.title)
       );
-      page = getPageFromLink(link.title);
+      page = getPageFromLink(link.title, currentParent);
     }
 
     link.target = page!.uri;
     return link;
-  }*/
+  }
 }
 
 export function registerDocumentLinkProvider() {

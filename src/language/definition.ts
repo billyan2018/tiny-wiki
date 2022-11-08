@@ -3,9 +3,9 @@ import {
     languages,
     LocationLink,
     Position, Range,
-    TextDocument,
-    workspace
+    TextDocument
 } from "vscode";
+import * as vscode from "vscode";
 import { EXTENSION_NAME } from "../constants";
 import { getPageFromLink, LINK_PATTERN, LINK_SELECTOR, retrieveParentPath, withProgress } from "../utils";
 
@@ -34,8 +34,7 @@ class WikiDefinitionProvider implements DefinitionProvider {
         position: Position,
         cancel: CancellationToken
     ): Promise<LocationLink[] | undefined> {
-        const currentUrl = document.uri.toString();
-        const currentPath = workspace.asRelativePath(currentUrl, false);
+        const currentPath =  '/' + vscode.workspace.asRelativePath(vscode.window.activeTextEditor!.document.uri, false); 
         const currentParent = retrieveParentPath(currentPath);
         const link = findLink(document, position);
         if (link) {
@@ -46,7 +45,7 @@ class WikiDefinitionProvider implements DefinitionProvider {
                 );
                 page = getPageFromLink(link.title, currentParent);
             }
-            let target = page!.uri;
+            let target = page.uri;
             return cancel.isCancellationRequested ? undefined : [{
                 originSelectionRange: link.range,
                 targetRange: new Range(

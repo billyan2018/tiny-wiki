@@ -59,7 +59,7 @@ export function* findLinks(contents: string): Generator<WikiLink> {
 }
 
 export function getPageFromLink(link: string, basePath: string): WikiPage {
-  const path = link.startsWith('/') ? link : basePath + link;
+  const path = link.startsWith('/') ? link : basePath + '/' + link;
   return store.pages.find(
     (page) => page.path.replace(".md", "") === path
   )!;

@@ -9,7 +9,6 @@ import { registerCommentController } from "./links/comments";
 import { registerLinkDecorator } from "./links/decorator";
 import { extendMarkdownIt } from "./links/markdownPreview";
 import { initializeWiki } from "./store/actions";
-import { registerTreeProvider } from "./tree";
 
 function initialize() {
   const workspace = vscode.workspace.workspaceFolders?.[0];
@@ -38,7 +37,6 @@ export function activate(context: vscode.ExtensionContext) {
   registerDocumentLinkProvider();
   registerDefinitionProvider();
   registerCommentController();
-  registerTreeProvider();
 
   vscode.workspace.onDidChangeConfiguration((e) => {
     if (e.affectsConfiguration("tiny-wiki.enabled")) {

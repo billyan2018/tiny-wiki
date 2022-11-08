@@ -2,7 +2,7 @@ import * as minimatch from "minimatch";
 import * as vscode from "vscode";
 import { observable, runInAction } from "mobx";
 import { Location, Range, Uri, workspace } from "vscode";
-import { store, treeStore, WikiDirectory, WikiItem, WikiPage } from ".";
+import { store,  WikiPage } from ".";
 import { config } from "../config";
 import {
   areEqualUris,
@@ -82,73 +82,8 @@ async function updatePageBacklinks(page: WikiPage) {
   });
 }
 
-async function addPageToDirectory(page: WikiPage, tree: WikiItem[]) {
-  const pathParts = page.path.split("/");
-  pathParts.splice(-1, 1);
 
-  let parent: WikiDirectory | undefined;
-  for (let pathPart of pathParts) {
-    const items: WikiItem[] = parent ? parent.pages : tree;
-    let directory = items.find(
-      (item) => (item as WikiPage).uri === undefined && item.name === pathPart
-    );
-    if (directory) {
-      parent = directory as WikiDirectory;
-    } else {
-      const pathSuffix = parent ? `${parent.path}/` : "";
-      directory = <WikiDirectory>{
-        name: pathPart,
-        path: `${pathSuffix}${pathPart}`,
-        pages: [],
-      };
 
-      items.push(directory);
-      parent = directory;
-    }
-  }
-
-  parent!.pages.push(page);
-}
-
-function getDirectory(path: string) {
-  const pathParts = path.split("/");
-
-  let parent: WikiDirectory | undefined;
-  for (let pathPart of pathParts) {
-    const items: WikiItem[] = parent ? parent.pages : treeStore.tree;
-    parent = items.find(
-      (item) => (item as WikiPage).uri === undefined && item.name === pathPart
-    ) as WikiDirectory;
-  }
-
-  return parent;
-}
-
-async function removePageFromDirectory(page: WikiPage) {
-  const pathParts = page.path.split("/");
-  pathParts.splice(-1, 1);
-
-  const directory = getDirectory(pathParts.join("/"));
-  directory!.pages = directory!.pages.filter((p) => p.path !== page.path);
-
-  if (directory!.pages.length === 0) {
-    if (directory!.path.includes("/")) {
-      const directoryPathParts = directory!.path.split("/");
-      directoryPathParts.splice(-1, 1);
-      const parentDirectory = getDirectory(directoryPathParts.join("/"));
-      parentDirectory!.pages = directory!.pages.filter(
-        (p) => p.path !== directory!.path
-      );
-
-      // TODO: Support multiple levels of directories
-      // TODO: Delete an empty directory from the filesystem??
-    } else {
-      treeStore.tree = treeStore.tree.filter(
-        (p) => p.path !== directory!.path
-      );
-    }
-  }
-}
 
 function getIgnoredFiles() {
   return `{${config.ignoredFiles.join(",")}}`;
@@ -162,19 +97,7 @@ export async function updateWiki() {
   const pageUris = await workspace.findFiles(`**/*.md`, ignoredFiles, 500);
 
   const pages = pageUris.map((uri) => createPage(uri));
-
-  const tree: WikiItem[] = [];
-  for (const page of pages) {
-    if (!page.path.includes("/")) {
-      tree.push(page);
-    } else {
-      await addPageToDirectory(page, tree);
-    }
-  }
-
   store.pages = pages;
-  treeStore.tree = tree;
-
   store.isLoading = false;
 
   await Promise.all(pages.map((page) => updatePageContents(page)));
@@ -207,22 +130,20 @@ export async function initializeWiki(workspaceRoot: string) {
     await updatePageBacklinks(page);
 
     if (isNewPage) {
-      if (page.path.substring(1).includes("/")) {
-        await addPageToDirectory(page, treeStore.tree!);
-      } else {
-        treeStore.tree!.push(page);
-      }
-
       store.pages.push(page);
     }
   });
 
   watcher.onDidDelete(async (uri) => {
     // TODO: Scope changes to the current workspace
-    if (uri.scheme === "vscode-userdata") return;
+    if (uri.scheme === "vscode-userdata") {
+      return;
+    }
 
     const page = getPage(uri);
-    if (!page) return;
+    if (!page) {
+      return;
+    }
 
     const linkedPages = store.pages.filter(
       (page) =>
@@ -236,25 +157,18 @@ export async function initializeWiki(workspaceRoot: string) {
       );
     }
 
-    if (page.path.includes("/")) {
-      await removePageFromDirectory(page);
-    } else {
-      treeStore.tree = treeStore.tree!.filter(
-        (item) =>
-          !(item as WikiPage).uri ||
-          ((item as WikiPage).uri &&
-            (item as WikiPage).uri.toString() !== uri.toString())
-      );
-    }
-
     store.pages = store.pages.filter((page) => !areEqualUris(page.uri, uri));
   });
 
   watcher.onDidChange(async (uri) => {
-    if (uri.scheme === "vscode-userdata") return;
+    if (uri.scheme === "vscode-userdata") {
+      return;
+    }
 
     const page = getPage(uri);
-    if (!page) return;
+    if (!page) {
+      return;
+    }
 
     await updatePageContents(page);
     await updatePageBacklinks(page);

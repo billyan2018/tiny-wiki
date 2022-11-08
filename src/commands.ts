@@ -3,7 +3,6 @@ import { config } from "./config";
 import { EXTENSION_NAME } from "./constants";
 import { store } from "./store";
 import { updateWiki } from "./store/actions";
-import { WikiDirectoryNode, WikiPageNode } from "./tree/nodes";
 import { getPageFilePath, removeLeadingSlash, stringToByteArray, withProgress } from "./utils";
 
 import moment = require("moment");
@@ -33,56 +32,6 @@ export function registerCommands(context: ExtensionContext) {
         // Automatically save the current, in order to ensure
         // the newly created backlink is discovered.
         await window.activeTextEditor?.document.save();
-      }
-    )
-  );
-
-  context.subscriptions.push(
-    commands.registerCommand(
-      `${EXTENSION_NAME}.addWikiPage`,
-      async (node?: WikiDirectoryNode) => {
-        const input = window.createInputBox();
-        input.title = `Add wiki page`;
-        input.prompt = "Enter the name of the new page you'd like to create";
-
-        input.onDidAccept(async () => {
-          input.hide();
-
-          if (input.value) {
-            const path = getPageFilePath(input.value);
-            const filePath = node ? `${node.directory.path}/${path}` : path;
-
-            await withProgress("Adding new page...", async () =>
-              createWikiPage(input.value, filePath)
-            );
-            const pageUri = Uri.joinPath(
-              workspace.workspaceFolders![0].uri,
-              removeLeadingSlash(filePath)
-            );
-            window.showTextDocument(pageUri);
-          }
-        });
-
-        input.show();
-      }
-    )
-  );
-
-  context.subscriptions.push(
-    commands.registerCommand(
-      `${EXTENSION_NAME}.deleteWikiPage`,
-      async (node: WikiPageNode) => {
-        if (
-          await window.showInformationMessage(
-            `Are you sure that you want to delete the "${node.page.path
-            }" page?`,
-            "Delete"
-          )
-        ) {
-          await withProgress("Deleting page...", async () =>
-            workspace.fs.delete(node.page.uri)
-          );
-        }
       }
     )
   );
