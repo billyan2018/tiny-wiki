@@ -28,7 +28,6 @@ export function getPageFilePath(name: string) {
   if (!fileName.endsWith(".md")) {
     fileName += ".md";
   }
-
   return fileName;
 }
 
@@ -59,37 +58,38 @@ export function* findLinks(contents: string): Generator<WikiLink> {
   }
 }
 
-export function getPageFromLink(link: string): WikiPage {
-  return store.pages!.find(
-    (page) => page.path.replace(".md", "") === link
+export function getPageFromLink(link: string, basePath: string): WikiPage {
+  const path = link.startsWith('/') ? link : basePath + link;
+  return store.pages.find(
+    (page) => page.path.replace(".md", "") === path
   )!;
 }
 
-export function getUriFromLink(link: string) {
-  const page = getPageFromLink(link);
+export function getUriFromLink(link: string, basePath: string) {
+  const page = getPageFromLink(link, basePath);
   return page?.uri;
 }
 
 export function byteArrayToString(value: Uint8Array) {
-  //return new TextDecoder().decode(value);
-  let result = '';
-  for (var i = 0; i < value.length; ++i) {
-      const byte = value[i];
+  return new TextDecoder().decode(value);
+  /*let result = '';
+  for (const byte of value) {
       const text = byte.toString(16);
       result += (byte < 16 ? '%0' : '%') + text;
   }
-  return decodeURIComponent(result);
+  return decodeURIComponent(result);*/
 }
 
 export function stringToByteArray(value: string): Uint8Array {
-  //return new TextEncoder().encode(value);
+  return new TextEncoder().encode(value);
+  /*
   const buffer = Buffer.from(value, 'utf8');
   const result = new Uint8Array(buffer.length);
 	//const result = Array(buffer.length);
 	for (let i = 0; i < buffer.length; i++) {
 		result[i] = buffer[i];
 	}
-	return result;
+	return result;*/
 }
 
 export function withProgress<T>(title: string, action: () => Promise<T>) {
@@ -108,4 +108,14 @@ export function areEqualUris(uri: Uri, otherUri: Uri) {
 
 export function isWikiDocument(document: TextDocument) {
   return document.uri.path.endsWith(".md");
+}
+
+export function removeLeadingSlash(oFilePath: string) {
+  return oFilePath.startsWith('/') ? oFilePath.substring(1) : oFilePath;
+}
+
+export function retrieveParentPath(currentPath: string) {
+  const pathPars = currentPath.split('/');
+  pathPars.pop();
+  return pathPars.join('/');
 }

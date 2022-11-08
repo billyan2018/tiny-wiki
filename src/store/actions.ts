@@ -1,4 +1,5 @@
 import * as minimatch from "minimatch";
+import * as vscode from "vscode";
 import { observable, runInAction } from "mobx";
 import { Location, Range, Uri, workspace } from "vscode";
 import { store, treeStore, WikiDirectory, WikiItem, WikiPage } from ".";
@@ -7,7 +8,8 @@ import {
   areEqualUris,
   byteArrayToString,
   findLinks,
-  getPageFromLink
+  getPageFromLink,
+  retrieveParentPath
 } from "../utils";
 
 async function getBackLinks({ uri, contents }: WikiPage) {
@@ -28,7 +30,10 @@ async function getBackLinks({ uri, contents }: WikiPage) {
 }
 
 function createPage(uri: Uri) {
-  const path = workspace.asRelativePath(uri, false);
+  let path = '/' + workspace.asRelativePath(uri, false);
+  if (path.endsWith('.md')) {
+    path = path.substring(0, path.length - '.md'.length);
+  }
 
   return observable({
     uri,
@@ -62,9 +67,10 @@ async function updatePageBacklinks(page: WikiPage) {
         (link) => !areEqualUris(link.location.uri, page.uri)
       );
     }
-
+    const currentPath =  '/' + vscode.workspace.asRelativePath(vscode.window.activeTextEditor!.document.uri, false); 
+    const currentParent = retrieveParentPath(currentPath);
     for (let link of newLinks) {
-      const page = getPageFromLink(link.title);
+      const page = getPageFromLink(link.title, currentParent);
       if (page) {
         if (!page.backLinks) {
           page.backLinks = [];
@@ -109,7 +115,7 @@ function getDirectory(path: string) {
 
   let parent: WikiDirectory | undefined;
   for (let pathPart of pathParts) {
-    const items: WikiItem[] = parent ? parent.pages : treeStore.tree!;
+    const items: WikiItem[] = parent ? parent.pages : treeStore.tree;
     parent = items.find(
       (item) => (item as WikiPage).uri === undefined && item.name === pathPart
     ) as WikiDirectory;
@@ -137,7 +143,7 @@ async function removePageFromDirectory(page: WikiPage) {
       // TODO: Support multiple levels of directories
       // TODO: Delete an empty directory from the filesystem??
     } else {
-      treeStore.tree = treeStore.tree!.filter(
+      treeStore.tree = treeStore.tree.filter(
         (p) => p.path !== directory!.path
       );
     }
@@ -186,8 +192,9 @@ export async function initializeWiki(workspaceRoot: string) {
     if (
       uri.scheme === "vscode-userdata" ||
       minimatch(uri.path, getIgnoredFiles())
-    )
+    ) {
       return;
+    }
 
     let page = getPage(uri);
     let isNewPage = false;
@@ -200,7 +207,7 @@ export async function initializeWiki(workspaceRoot: string) {
     await updatePageBacklinks(page);
 
     if (isNewPage) {
-      if (page.path.includes("/")) {
+      if (page.path.substring(1).includes("/")) {
         await addPageToDirectory(page, treeStore.tree!);
       } else {
         treeStore.tree!.push(page);

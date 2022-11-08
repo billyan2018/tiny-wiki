@@ -3,10 +3,11 @@ import {
     languages,
     LocationLink,
     Position, Range,
-    TextDocument
+    TextDocument,
+    workspace
 } from "vscode";
 import { EXTENSION_NAME } from "../constants";
-import { getPageFromLink, LINK_PATTERN, LINK_SELECTOR, withProgress } from "../utils";
+import { getPageFromLink, LINK_PATTERN, LINK_SELECTOR, retrieveParentPath, withProgress } from "../utils";
 
 function findLink(doc: TextDocument, pos: Position) {
     let match;
@@ -33,14 +34,17 @@ class WikiDefinitionProvider implements DefinitionProvider {
         position: Position,
         cancel: CancellationToken
     ): Promise<LocationLink[] | undefined> {
+        const currentUrl = document.uri.toString();
+        const currentPath = workspace.asRelativePath(currentUrl, false);
+        const currentParent = retrieveParentPath(currentPath);
         const link = findLink(document, position);
         if (link) {
-            let page = getPageFromLink(link.title);
+            let page = getPageFromLink(link.title, currentParent);
             if (!page) {
                 await withProgress("Creating page...", async () =>
                     commands.executeCommand(`${EXTENSION_NAME}._createWikiPage`, link.title)
                 );
-                page = getPageFromLink(link.title);
+                page = getPageFromLink(link.title, currentParent);
             }
             let target = page!.uri;
             return cancel.isCancellationRequested ? undefined : [{

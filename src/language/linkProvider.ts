@@ -37,7 +37,7 @@ class WikiDocumentLinkProvider implements DocumentLinkProvider {
     });
   }
 
-  async resolveDocumentLink(link: WikiDocumentLink, token: CancellationToken) {
+  /*async resolveDocumentLink(link: WikiDocumentLink, token: CancellationToken) {
     let page = getPageFromLink(link.title);
     if (!page) {
       await withProgress("Creating page...", async () =>
@@ -48,7 +48,7 @@ class WikiDocumentLinkProvider implements DocumentLinkProvider {
 
     link.target = page!.uri;
     return link;
-  }
+  }*/
 }
 
 export function registerDocumentLinkProvider() {

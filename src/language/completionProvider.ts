@@ -5,7 +5,8 @@ import {
   languages,
   Position,
   Range,
-  TextDocument
+  TextDocument,
+  workspace
 } from "vscode";
 import { EXTENSION_NAME } from "../constants";
 import { store, WikiPage } from "../store";
@@ -13,7 +14,8 @@ import {
   getPageFromLink,
   LINK_PREFIX,
   LINK_SELECTOR,
-  LINK_SUFFIX
+  LINK_SUFFIX,
+  retrieveParentPath
 } from "../utils";
 
 class WikiLinkCompletionProvider implements CompletionItemProvider {
@@ -35,14 +37,20 @@ class WikiLinkCompletionProvider implements CompletionItemProvider {
       return;
     }
 
-    const wikipages = store.pages!.filter(
+
+    const wikipages = store.pages.filter(
       (page: WikiPage) => page.uri.toString() !== document.uri.toString()
     );
-    console.log(wikipages);
-    const documentItems = wikipages.map((wikipage) => {
 
+    const currentPath =  '/' + workspace.asRelativePath(document.uri, false); 
+    const currentParent = retrieveParentPath(currentPath);
+    const documentItems = wikipages.map((wikipage) => {
+      let itemPath = wikipage.path;
+      if (itemPath.startsWith(currentParent)) {
+        itemPath = itemPath.substring(currentParent.length + 1);
+      }
       const item = new CompletionItem(
-        wikipage.path.replace('.md', ''),
+        itemPath,
         CompletionItemKind.File
       );
 
@@ -52,11 +60,10 @@ class WikiLinkCompletionProvider implements CompletionItemProvider {
         command: "workbench.action.files.save",
         title: "Reference document",
       };
-
       return item;
     });
 
-    if (!getPageFromLink(link)) {
+    if (!getPageFromLink(link, currentParent)) {
       const newDocumentItem = new CompletionItem(link, CompletionItemKind.File);
       newDocumentItem.detail = `Create new page page "${link}"`;
 

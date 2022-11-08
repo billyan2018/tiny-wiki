@@ -4,19 +4,18 @@ import { EXTENSION_NAME } from "./constants";
 import { store } from "./store";
 import { updateWiki } from "./store/actions";
 import { WikiDirectoryNode, WikiPageNode } from "./tree/nodes";
-import { getPageFilePath, stringToByteArray, withProgress } from "./utils";
+import { getPageFilePath, removeLeadingSlash, stringToByteArray, withProgress } from "./utils";
 
 import moment = require("moment");
 const { titleCase } = require("title-case");
 
-async function createWikiPage(name: string, filePath: string) {
+async function createWikiPage(name: string, oFilePath: string) {
   const title = titleCase(name);
   let fileHeading = `# ${title}
 
 `;
+   const pageUri = Uri.joinPath(workspace.workspaceFolders![0].uri, removeLeadingSlash(oFilePath));
 
-  const pageUri = Uri.joinPath(workspace.workspaceFolders![0].uri, filePath);
-  
   return workspace.fs.writeFile(pageUri, stringToByteArray(fileHeading));
 }
 
@@ -58,7 +57,7 @@ export function registerCommands(context: ExtensionContext) {
             );
             const pageUri = Uri.joinPath(
               workspace.workspaceFolders![0].uri,
-              filePath
+              removeLeadingSlash(filePath)
             );
             window.showTextDocument(pageUri);
           }
@@ -108,7 +107,7 @@ export function registerCommands(context: ExtensionContext) {
 
         const pageUri = Uri.joinPath(
           workspace.workspaceFolders![0].uri,
-          filePath
+          removeLeadingSlash(filePath)
         );
 
         try {

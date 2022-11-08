@@ -6,11 +6,15 @@ import {
   Position,
   Range,
   TextDocument,
+  workspace,
 } from "vscode";
-import { findLinks, getPageFromLink, LINK_SELECTOR } from "../utils";
+import { findLinks, getPageFromLink, LINK_SELECTOR, retrieveParentPath } from "../utils";
 
 class LinkHoverProvider implements HoverProvider {
   public provideHover(document: TextDocument, position: Position) {
+    const currentUrl = document.uri.toString();
+    const currentPath = workspace.asRelativePath(currentUrl, false);
+    const currentParent = retrieveParentPath(currentPath);
     const line = document.lineAt(position).text;
     const links = [...findLinks(line)];
     if (!links) {
@@ -18,7 +22,7 @@ class LinkHoverProvider implements HoverProvider {
     }
 
     const link = links.find(({ start, end }) => {
-      const range = new Range(position.line, start, position.line, end);
+      const range: Range = new Range(position.line, start, position.line, end);
       return range.contains(position);
     });
 
@@ -26,7 +30,7 @@ class LinkHoverProvider implements HoverProvider {
       return;
     }
 
-    const treeItem = getPageFromLink(link.title);
+    const treeItem = getPageFromLink(link.title, currentParent);
     if (treeItem) {
       const contents = new MarkdownString(treeItem.contents);
       return new Hover(contents);

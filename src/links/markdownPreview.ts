@@ -1,7 +1,9 @@
 import * as vscode from "vscode";
-import { getPageFromLink, getUriFromLink, isWikiDocument } from "../utils";
+import { getPageFromLink, getUriFromLink, isWikiDocument, retrieveParentPath } from "../utils";
 
 export function extendMarkdownIt(md: any) {
+  const currentPath =  '/' + vscode.workspace.asRelativePath(vscode.window.activeTextEditor!.document.uri, false); 
+  const currentParent = retrieveParentPath(currentPath);
   return md
     .use(require("markdown-it-regex").default, {
       name: "tiny-wiki-links",
@@ -11,7 +13,7 @@ export function extendMarkdownIt(md: any) {
           return;
         }
 
-        const linkUri = getUriFromLink(link);
+        const linkUri = getUriFromLink(link, currentParent);
         const args = encodeURIComponent(JSON.stringify([linkUri]));
         const href = `command:vscode.open?${args}`;
 
@@ -28,7 +30,7 @@ export function extendMarkdownIt(md: any) {
 
         console.log("GW Displaying link");
 
-        const page = getPageFromLink(link);
+        const page = getPageFromLink(link, currentParent);
         if (page) {
           console.log("GW Got page: ", page);
           const markdown = require("markdown-it")();
