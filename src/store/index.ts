@@ -18,5 +18,6 @@ export interface WikiPageBackLink {
 export const store = observable({
   isLoading: true,
   pages: <WikiPage[]>[],
+  resources: <string[]>[],
 });
 

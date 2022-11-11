@@ -8,16 +8,19 @@ import {
   TextDocument,
   workspace
 } from "vscode";
-import { EXTENSION_NAME } from "../constants";
+import { EXTENSION_NAME } from "../config";
 import { store, WikiPage } from "../store";
 import {
   getPageFromLink,
-  LINK_PREFIX,
   LINK_SELECTOR,
-  LINK_SUFFIX,
+
   retrieveParentPath
 } from "../utils";
 
+export const LINK_PREFIX = "[[";
+export const LINK_SUFFIX = "]]";
+
+const RX_IMAGE = /\[(.*)\]\((.*)\)/;
 class WikiLinkCompletionProvider implements CompletionItemProvider {
   provideCompletionItems(
     document: TextDocument,
@@ -28,10 +31,31 @@ class WikiLinkCompletionProvider implements CompletionItemProvider {
       .text.slice(0, position.character);
 
     const linkOpening = lineText.lastIndexOf(LINK_PREFIX);
-    if (linkOpening === -1) {
-      return;
+    if (linkOpening !== -1) {
+      return this.completeLink(document, position, lineText, linkOpening);
+    }
+    const imageTagPos = lineText.search(RX_IMAGE);
+    if (imageTagPos !== -1) {
+      const currentPath =  '/' + workspace.asRelativePath(document.uri, false); 
+      const currentParent = retrieveParentPath(currentPath);
+      return store.resources.map((path) => {
+        let itemPath = path;
+        if (itemPath.startsWith(currentParent)) {
+          itemPath = itemPath.substring(currentParent.length + 1);
+        }
+        return new CompletionItem(
+          itemPath,
+          CompletionItemKind.File
+        );
+      });
     }
 
+
+  }
+  completeLink(document: TextDocument,
+    position: Position,
+    lineText: string,
+    linkOpening: number) : CompletionItem[] | undefined {
     const link = lineText.slice(linkOpening + LINK_PREFIX.length);
     if (link === undefined || link.includes(LINK_SUFFIX)) {
       return;

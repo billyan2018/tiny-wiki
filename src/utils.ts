@@ -17,8 +17,7 @@ export const LINK_SELECTOR: DocumentSelector = [
   },
 ];
 
-export const LINK_PREFIX = "[[";
-export const LINK_SUFFIX = "]]";
+
 export const LINK_PATTERN =
   /(?:\s|^)((?:[#\!]?\[\[)(?<page>[^\]`]+)(?:\]\])|#(?<tag>[^\s#`,]+))/gim;
 
@@ -68,28 +67,6 @@ export function getPageFromLink(link: string, basePath: string): WikiPage {
 export function getUriFromLink(link: string, basePath: string) {
   const page = getPageFromLink(link, basePath);
   return page?.uri;
-}
-
-export function byteArrayToString(value: Uint8Array) {
-  return new TextDecoder().decode(value);
-  /*let result = '';
-  for (const byte of value) {
-      const text = byte.toString(16);
-      result += (byte < 16 ? '%0' : '%') + text;
-  }
-  return decodeURIComponent(result);*/
-}
-
-export function stringToByteArray(value: string): Uint8Array {
-  return new TextEncoder().encode(value);
-  /*
-  const buffer = Buffer.from(value, 'utf8');
-  const result = new Uint8Array(buffer.length);
-	//const result = Array(buffer.length);
-	for (let i = 0; i < buffer.length; i++) {
-		result[i] = buffer[i];
-	}
-	return result;*/
 }
 
 export function withProgress<T>(title: string, action: () => Promise<T>) {

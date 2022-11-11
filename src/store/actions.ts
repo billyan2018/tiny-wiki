@@ -6,7 +6,6 @@ import { store,  WikiPage } from ".";
 import { config } from "../config";
 import {
   areEqualUris,
-  byteArrayToString,
   findLinks,
   getPageFromLink,
   retrieveParentPath
@@ -44,6 +43,11 @@ function createPage(uri: Uri) {
 
 function getPage(uri: Uri) {
   return store.pages.find((page) => page.uri.toString() === uri.toString());
+}
+
+export function byteArrayToString(value: Uint8Array) {
+  return new TextDecoder().decode(value);
+
 }
 
 async function updatePageContents(page: WikiPage) {
@@ -89,6 +93,13 @@ function getIgnoredFiles() {
   return `{${config.ignoredFiles.join(",")}}`;
 }
 
+export async function updateResources() {
+  const ignoredFiles = getIgnoredFiles();
+  const uris = await workspace.findFiles(`**​/*.{png,jpg,jpeg,PNG,JPG,JPEG}`, ignoredFiles, 500);
+
+  store.resources = uris.map((uri) =>  '/' + workspace.asRelativePath(uri, false));
+}
+
 export async function updateWiki() {
   // TODO: Figure out how to find non-committed
   // files in github.dev
@@ -108,6 +119,7 @@ export async function initializeWiki(workspaceRoot: string) {
   store.isLoading = true;
 
   updateWiki();
+  updateResources();
 
   const watcher = workspace.createFileSystemWatcher(`**/**.md`);
 

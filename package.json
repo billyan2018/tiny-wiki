@@ -29,12 +29,6 @@
         "category": "tiny-wiki"
       },
       {
-        "command": "tiny-wiki.openTodayPage",
-        "title": "Open Today Page",
-        "category": "tiny-wiki",
-        "icon": "$(calendar)"
-      },
-      {
         "command": "tiny-wiki.refreshWiki",
         "title": "Refresh",
         "category": "tiny-wiki",
@@ -52,10 +46,6 @@
           "when": "false"
         },
         {
-          "command": "tiny-wiki.openTodayPage",
-          "when": "tiny-wiki:isWikiWorkspace"
-        },
-        {
           "command": "tiny-wiki.refreshWiki",
           "when": "tiny-wiki:isWikiWorkspace"
         }
@@ -65,11 +55,6 @@
           "command": "tiny-wiki.refreshWiki",
           "when": "view == tiny-wiki.wiki",
           "group": "navigation@1"
-        },
-        {
-          "command": "tiny-wiki.openTodayPage",
-          "when": "view == tiny-wiki.wiki",
-          "group": "navigation@2"
         },
         {
           "command": "tiny-wiki.addWikiPage",
@@ -171,7 +156,6 @@
     "markdown-it-regex": "^0.2.0",
     "minimatch": "^3.0.4",
     "mobx": "^6.3.2",
-    "moment": "^2.29.1",
     "title-case": "^3.0.3"
   }
 }

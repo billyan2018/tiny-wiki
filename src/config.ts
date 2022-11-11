@@ -1,5 +1,6 @@
 import { workspace } from "vscode";
-import { EXTENSION_NAME } from "./constants";
+
+export const EXTENSION_NAME = "tiny-wiki";
 
 function getConfigSetting(settingName: string, defaultValue?: any) {
   return workspace

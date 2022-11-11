@@ -6,6 +6,7 @@ import {
   Position,
   Range,
   TextDocument,
+  Uri,
   window,
   workspace,
 } from "vscode";
@@ -30,11 +31,26 @@ class LinkHoverProvider implements HoverProvider {
       return;
     }
 
-    const treeItem = getPageFromLink(link.title, currentParent);
-    if (treeItem) {
-      const contents = new MarkdownString(treeItem.contents);
+    const page = getPageFromLink(link.title, currentParent);
+    if (page) {
+      const text = page.contents;
+      const proceededText = this.proceedLinks(text || '', page.path);
+      const contents = new MarkdownString(proceededText);
       return new Hover(contents);
     }
+  }
+  proceedLinks(text: string, pagePath: string): string {
+    const basePath = retrieveParentPath(pagePath);
+    return text.replace(/\[(.*)\]\((.*)\)/, (url) => {
+      const posStart = url.indexOf('(');
+      const posEnd = url.indexOf(')');
+      const link = url.slice(posStart + 1, posEnd);
+      const path = link.startsWith('/') ? link : basePath + '/' + link;
+      const imageUri = Uri.joinPath(
+        workspace.workspaceFolders![0].uri, path).toString();
+      return `[](${imageUri})`;
+    });
+
   }
 }
 

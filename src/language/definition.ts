@@ -6,7 +6,7 @@ import {
     TextDocument
 } from "vscode";
 import * as vscode from "vscode";
-import { EXTENSION_NAME } from "../constants";
+import { EXTENSION_NAME } from "../config";
 import { getPageFromLink, LINK_PATTERN, LINK_SELECTOR, retrieveParentPath, withProgress } from "../utils";
 
 function findLink(doc: TextDocument, pos: Position) {
