@@ -1,7 +1,7 @@
 import { commands, ExtensionContext, Uri, window, workspace } from "vscode";
 import { EXTENSION_NAME } from "./config";
 import { store } from "./store";
-import { updateWiki } from "./store/actions";
+import { updateWiki } from "./store";
 import { getPageFilePath, removeLeadingSlash} from "./utils";
 const { titleCase } = require("title-case");
 

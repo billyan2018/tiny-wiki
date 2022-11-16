@@ -8,7 +8,7 @@ import { registerDocumentLinkProvider } from "./language/linkProvider";
 import { registerCommentController } from "./links/comments";
 import { registerLinkDecorator } from "./links/decorator";
 import { extendMarkdownIt } from "./links/markdownPreview";
-import { initializeWiki } from "./store/actions";
+import { initializeWiki } from "./store";
 
 function initialize() {
   const workspace = vscode.workspace.workspaceFolders?.[0];
@@ -19,7 +19,7 @@ function initialize() {
       true
     );
 
-    initializeWiki(workspace.uri.path);
+    initializeWiki();
   } else {
     vscode.commands.executeCommand(
       "setContext",

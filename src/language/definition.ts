@@ -7,7 +7,9 @@ import {
 } from "vscode";
 import * as vscode from "vscode";
 import { EXTENSION_NAME } from "../config";
-import { getPageFromLink, LINK_PATTERN, LINK_SELECTOR, retrieveParentPath, withProgress } from "../utils";
+import { LINK_SELECTOR, retrieveParentPath, withProgress } from "../utils";
+import { LINK_PATTERN } from "../store/wiki-link";
+import { getPageFromLink } from "../store";
 
 function findLink(doc: TextDocument, pos: Position) {
     let match;

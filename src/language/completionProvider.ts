@@ -9,9 +9,9 @@ import {
   workspace
 } from "vscode";
 import { EXTENSION_NAME } from "../config";
-import { store, WikiPage } from "../store";
+import { getPageFromLink, store } from "../store";
+import { WikiPage } from "../store/wiki-page";
 import {
-  getPageFromLink,
   LINK_SELECTOR,
 
   retrieveParentPath

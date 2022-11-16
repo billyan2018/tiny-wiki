@@ -11,7 +11,8 @@ import {
   window,
   workspace
 } from "vscode";
-import { store, WikiPage, WikiPageBackLink } from "../store";
+import { store } from "../store";
+import { WikiPage, WikiPageBackLink } from "../store/wiki-page";
 import { isWikiDocument } from "../utils";
 
 export class WikiBacklinksComments implements Comment {

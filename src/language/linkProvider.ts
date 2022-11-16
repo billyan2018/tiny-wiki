@@ -11,12 +11,12 @@ import {
 import * as vscode from "vscode";
 import { EXTENSION_NAME } from "../config";
 import {
-  findLinks,
-  getPageFromLink,
   LINK_SELECTOR,
   retrieveParentPath,
   withProgress,
 } from "../utils";
+import { findLinks } from "../store/wiki-link";
+import { getPageFromLink } from "../store";
 
 class WikiDocumentLink extends DocumentLink {
   constructor(public title: string, range: Range, target?: Uri) {

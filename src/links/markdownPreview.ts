@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
-import { getPageFromLink, getUriFromLink, isWikiDocument, retrieveParentPath } from "../utils";
+import { isWikiDocument, retrieveParentPath } from "../utils";
+import { getPageFromLink, getUriFromLink } from "../store";
 
 export function extendMarkdownIt(md: any) {
   const currentPath =  '/' + vscode.workspace.asRelativePath(vscode.window.activeTextEditor!.document.uri, false); 
