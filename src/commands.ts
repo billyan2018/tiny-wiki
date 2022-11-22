@@ -2,21 +2,38 @@ import { commands, ExtensionContext, Uri, window, workspace } from "vscode";
 import { EXTENSION_NAME } from "./config";
 import { store } from "./store";
 import { updateWiki } from "./store";
-import { getPageFilePath, removeLeadingSlash} from "./utils";
-const { titleCase } = require("title-case");
+import { removeLeadingSlash} from "./utils";
+
 
 
 function stringToByteArray(value: string): Uint8Array {
   return new TextEncoder().encode(value);
 }
-function createWikiPage(name: string, oFilePath: string) {
-  const title = titleCase(name);
+function createWikiPage(path: string, oFilePath: string) {
+
+  let title = path;
+  const pos = path.lastIndexOf('/');
+  if (pos >= 0) {
+    title = path.slice(pos + 1);
+  }
+
   let fileHeading = `# ${title}
 
 `;
    const pageUri = Uri.joinPath(workspace.workspaceFolders![0].uri, removeLeadingSlash(oFilePath));
 
   return workspace.fs.writeFile(pageUri, stringToByteArray(fileHeading));
+}
+
+function sanitizeName(name: string) {
+  return name.replace(/\s/g, "-");//.replace(/[^\w\d-_]/g, "");
+}
+function getPageFilePath(name: string) {
+  let fileName = sanitizeName(name).toLocaleLowerCase();
+  if (!fileName.endsWith(".md")) {
+    fileName += ".md";
+  }
+  return fileName;
 }
 
 export function registerCommands(context: ExtensionContext) {

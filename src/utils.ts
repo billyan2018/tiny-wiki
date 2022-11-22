@@ -6,29 +6,13 @@ import {
   window
 } from "vscode";
 
-export function sanitizeName(name: string) {
-  return name.replace(/\s/g, "-").replace(/[^\w\d-_]/g, "");
-}
+
 
 export const LINK_SELECTOR: DocumentSelector = [
   {
     language: "markdown",
   },
 ];
-
-
-
-
-export function getPageFilePath(name: string) {
-  let fileName = sanitizeName(name).toLocaleLowerCase();
-  if (!fileName.endsWith(".md")) {
-    fileName += ".md";
-  }
-  return fileName;
-}
-
-
-
 
 export function withProgress<T>(title: string, action: () => Promise<T>) {
   return window.withProgress(

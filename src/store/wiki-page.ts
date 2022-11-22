@@ -42,7 +42,7 @@ export class WikiPage {
 
 }
 
-export function byteArrayToString(value: Uint8Array) {
+function byteArrayToString(value: Uint8Array) {
   return new TextDecoder().decode(value);
 }
 

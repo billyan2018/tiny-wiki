@@ -9,7 +9,6 @@
   "categories": [
     "Other"
   ],
-
   "activationEvents": [
     "*"
   ],
@@ -155,7 +154,6 @@
     "markdown-it": "^13.0.1",
     "markdown-it-regex": "^0.2.0",
     "minimatch": "^3.0.4",
-    "mobx": "^6.3.2",
-    "title-case": "^3.0.3"
+    "mobx": "^6.3.2"
   }
 }
