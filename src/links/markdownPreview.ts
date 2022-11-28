@@ -9,16 +9,22 @@ export function extendMarkdownIt(md: any) {
     .use(require("markdown-it-regex").default, {
       name: "tiny-wiki-links",
       regex: /(?<!\!)(?:\[\[)([^\]]+?)(?:\]\])/,
-      replace: (link: string) => {
+      replace: (olink: string) => {
         if (!isWikiDocument(vscode.window.activeTextEditor!.document)) {
           return;
         }
-
+        let link = olink;
+        let text = olink;
+        const pos = link.indexOf('|');
+        if (pos >= 0) {
+          link = olink.slice(0, pos);
+          text = olink.slice(pos + 1);
+        }
         const linkUri = getUriFromLink(link, currentParent);
         const args = encodeURIComponent(JSON.stringify([linkUri]));
         const href = `command:vscode.open?${args}`;
 
-        return `[[<a href=${href} title=${link}>${link}</a>]]`;
+        return `[[<a href=${href}>${text}</a>]]`;
       },
     })
     .use(require("markdown-it-regex").default, {

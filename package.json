@@ -2,7 +2,16 @@
   "name": "tiny-wiki",
   "displayName": "tiny-wiki",
   "description": "a simple yet powerful wiki for vscode",
-  "version": "0.0.1",
+  "publisher": "billyan2018",
+	"license": "MIT",
+  "icon": "images/logo.png",
+  "repository": {
+		"url": "https://github.com/billyan2018/tiny-wiki"
+	},
+	"bugs": {
+		"url": "https://github.com/billyan2018/tiny-wiki/issues"
+	},
+  "version": "0.6.0",
   "engines": {
     "vscode": "^1.73.0"
   },
@@ -107,16 +116,6 @@
             "type": "string"
           },
           "description": "Specifies a list of file globs to ignore when processing for wiki pages."
-        },
-        "tiny-wiki.daily.directoryName": {
-          "default": "Daily",
-          "type": "string",
-          "description": "Specifies the name of the directory that daily pages are organized within."
-        },
-        "tiny-wiki.daily.titleFormat": {
-          "default": "LL",
-          "type": "string",
-          "markdownDescription": "Specifies the date format (using Moment/Day.js syntax) that is used for the title of daily pages.\n\n**Examples:** `dd/mm/yyyy`, `mm/dd/yyyy`, `yyyy/mm/dd`, `L`, `LL` ([details](https://momentjs.com/docs/#/displaying/format/))."
         }
       }
     },

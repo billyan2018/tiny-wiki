@@ -49,8 +49,6 @@ class WikiLinkCompletionProvider implements CompletionItemProvider {
         );
       });
     }
-
-
   }
   completeLink(document: TextDocument,
     position: Position,

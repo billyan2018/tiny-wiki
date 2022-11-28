@@ -9,12 +9,6 @@ function getConfigSetting(settingName: string, defaultValue?: any) {
 }
 
 export const config = {
-  get dailyDirectName() {
-    return getConfigSetting("daily.directoryName");
-  },
-  get dailyTitleFormat() {
-    return getConfigSetting("daily.titleFormat", "LL");
-  },
   get enabled() {
     return getConfigSetting("enabled", true);
   },

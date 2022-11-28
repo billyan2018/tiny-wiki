@@ -4,7 +4,7 @@ import { Uri, workspace, window } from "vscode";
 import { WikiPage } from "./wiki-page";
 import { config } from "../config";
 import {
-  areEqualUris, retrieveParentPath,
+  retrieveParentPath,
 } from "../utils";
 
 export const store = observable({
@@ -12,6 +12,10 @@ export const store = observable({
   pages: <WikiPage[]>[],
   resources: <string[]>[],
 });
+
+function areEqualUris(uri: Uri, otherUri: Uri) {
+  return uri.toString().localeCompare(otherUri.toString()) === 0;
+}
 
 async function updateResources() {
   const ignoredFiles = getIgnoredFiles();
