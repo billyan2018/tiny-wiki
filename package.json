@@ -22,7 +22,6 @@
     "*"
   ],
   "main": "./dist/extension.js",
-  "browser": "./dist/extension-web.js",
   "contributes": {
     "commands": [
       {
