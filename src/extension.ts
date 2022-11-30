@@ -39,7 +39,7 @@ export function activate(context: vscode.ExtensionContext) {
   registerCommentController();
 
   vscode.workspace.onDidChangeConfiguration((e) => {
-    if (e.affectsConfiguration("tiny-wiki.enabled")) {
+    if (e.affectsConfiguration('tiny-wiki.enabled')) {
       initialize();
     }
   });

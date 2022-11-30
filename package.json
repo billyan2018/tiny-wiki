@@ -11,7 +11,7 @@
 	"bugs": {
 		"url": "https://github.com/billyan2018/tiny-wiki/issues"
 	},
-  "version": "0.6.0",
+  "version": "0.8.0",
   "engines": {
     "vscode": "^1.73.0"
   },
@@ -19,7 +19,7 @@
     "Other"
   ],
   "activationEvents": [
-    "*"
+    "onLanguage:markdown"
   ],
   "main": "./dist/extension.js",
   "contributes": {
