@@ -14,44 +14,22 @@ import {
 import { store } from "../store";
 import { WikiPage, WikiPageBackLink } from "../store/wiki-page";
 import { isWikiDocument } from "../utils";
+import { config } from "../config";
+
+const AUTHOR = Object.freeze({
+  name: "Backlinks:",
+  iconPath: Uri.parse(config.logoUrl),
+});
 
 export class WikiBacklinksComments implements Comment {
-  public body: string | MarkdownString;
-  public mode: CommentMode = CommentMode.Preview;
-  public author: CommentAuthorInformation;
+  body: string | MarkdownString;
+  mode: CommentMode = CommentMode.Preview;
+  author: CommentAuthorInformation;
 
   constructor(backlinks: WikiPageBackLink[]) {
     const content = backlinks
-      .map((link) => {
-        const page = store.pages?.find(
-          (page: WikiPage) => page.uri.toString() === link.location.uri.toString()
-        );
-
-        const title = page!.path;
-        const args = [
-          link.location.uri,
-          {
-            selection: {
-              start: {
-                line: link.location.range.start.line,
-                character: link.location.range.start.character,
-              },
-              end: {
-                line: link.location.range.end.line,
-                character: link.location.range.end.character,
-              },
-            },
-          },
-        ];
-        const command = `command:vscode.open?${encodeURIComponent(
-          JSON.stringify(args)
-        )}`;
-        return `### [${title}](${command} 'Open the "${title}" page')
-        
-   \`\`\`markdown
-   ${link.linePreview}
-   \`\`\``;
-      })
+      .map((link) =>renderBackLink(link)
+      )
       .join("\r\n");
 
     const markdown = new MarkdownString(content);
@@ -59,26 +37,49 @@ export class WikiBacklinksComments implements Comment {
 
     this.body = markdown;
 
-    this.author = {
-      name: "tiny-wiki (Backlinks)",
-      iconPath: Uri.parse(
-        "https://cdn.jsdelivr.net/gh/lostintangent/tiny-wiki/icon.png"
-      ),
-    };
+    this.author = AUTHOR;
   }
 }
+
+function renderBackLink(link: WikiPageBackLink) {
+  const page = store.pages?.find(
+    (page: WikiPage) => page.uri.toString() === link.location.uri.toString()
+  );
+
+  const title = page!.path;
+  const args = [
+    link.location.uri,
+    {
+      selection: {
+        start: {
+          line: link.location.range.start.line,
+          character: link.location.range.start.character,
+        },
+        end: {
+          line: link.location.range.end.line,
+          character: link.location.range.end.character,
+        },
+      },
+    },
+  ];
+  const command = `command:vscode.open?${encodeURIComponent(
+    JSON.stringify(args)
+  )}`;
+  return `### [${title}](${command} 'Open the "${title}" page')
+  
+\`\`\`markdown
+${link.linePreview}
+\`\`\``;
+}
+
 
 let controller: CommentController | undefined;
 export function registerCommentController() {
   window.onDidChangeActiveTextEditor((e) => {
-    if (controller) {
-      controller.dispose();
-      controller = undefined;
-    }
-
     if (!e || !isWikiDocument(e.document)) {
       return;
     }
+
 
     const page = store.pages?.find(
       (page) => page.uri.toString() === e.document.uri.toString()
@@ -87,6 +88,10 @@ export function registerCommentController() {
       return;
     }
 
+    if (controller) {
+      controller.dispose();
+      controller = undefined;
+    }
     controller = comments.createCommentController(
       "tiny-wiki.backlinks",
       "tiny-wiki"

@@ -57,18 +57,7 @@
           "when": "tiny-wiki:isWikiWorkspace"
         }
       ],
-      "view/title": [
-        {
-          "command": "tiny-wiki.refreshWiki",
-          "when": "view == tiny-wiki.wiki",
-          "group": "navigation@1"
-        },
-        {
-          "command": "tiny-wiki.addWikiPage",
-          "when": "view == tiny-wiki.wiki",
-          "group": "navigation@3"
-        }
-      ],
+
       "view/item/context": [
         {
           "command": "tiny-wiki.addWikiPage",
@@ -84,15 +73,6 @@
           "command": "tiny-wiki.deleteWikiPage",
           "when": "viewItem == tiny-wiki.page",
           "group": "basic@1"
-        }
-      ]
-    },
-    "views": {
-      "explorer": [
-        {
-          "id": "tiny-wiki.wiki",
-          "name": "Wiki",
-          "when": "tiny-wiki:isWikiWorkspace"
         }
       ]
     },

@@ -12,6 +12,9 @@ export const config = {
   get enabled() {
     return getConfigSetting("enabled", true);
   },
+  get logoUrl() {
+    return 'https://cdn.jsdelivr.net/gh/billyan2018/tiny-wiki/images/logo.png';
+  },
   get ignoredFiles() {
     return getConfigSetting("ignoredFiles", [
       "**/node_modules/**",
