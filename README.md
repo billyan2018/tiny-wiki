@@ -2,9 +2,7 @@
 
 A **simple** yet powerful wiki/note-taking extension for vscode.
 
-<video src="images/demo-link.mp4" controls>
-
-</video>
+![](images/demo-link.gif)
 
 ## Features
 - Helps to **link** your notes(markdown documents) together. To refer to another markdown document in your current one, just type:
