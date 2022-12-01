@@ -1,5 +1,5 @@
-import { Location, Range, Uri, workspace } from "vscode";
-import { findLinks } from "./wiki-link";
+import { Location, Range, Uri, workspace } from 'vscode';
+import { findLinks } from './wiki-link';
 
 
 export class WikiPage {
@@ -16,7 +16,7 @@ export class WikiPage {
       if (path.endsWith('.md')) {
         path = path.substring(0, path.length - '.md'.length);
       }
-      return new WikiPage(uri, path, path.split("/").pop()!.replace(".md", ""));
+      return new WikiPage(uri, path, path.split('/').pop()!.replace('.md', ''));
   }
 
   async getBackLinks() {

@@ -7,30 +7,30 @@ import {
   TextEditorDecorationType,
   window,
   workspace,
-} from "vscode";
-import { isWikiDocument } from "../utils";
+} from 'vscode';
+import { isWikiDocument } from '../utils';
 
 const decorationTypes: { [type: string]: TextEditorDecorationType } = {
   gray: window.createTextEditorDecorationType({
     rangeBehavior: 1,
-    dark: { color: "#636363" },
-    light: { color: "#CCC" },
+    dark: { color: '#636363' },
+    light: { color: '#CCC' },
   }),
   lightBlue: window.createTextEditorDecorationType({
-    color: "#4080D0",
+    color: '#4080D0',
   }),
 };
 
 const regexToDecorationTypes: { [regexp: string]: (string | null)[] } = {
-  ["(\\s|^)(\\[\\[)([^\\[\\]]+?)(\\]\\])"]: [null, "gray", "lightBlue", "gray"],
-  ["(\\s|^)([\\!\\#])(\\[\\[)([^\\[\\]]+?)(\\]\\])"]: [
+  ['(\\s|^)(\\[\\[)([^\\[\\]]+?)(\\]\\])']: [null, 'gray', 'lightBlue', 'gray'],
+  ['(\\s|^)([\\!\\#])(\\[\\[)([^\\[\\]]+?)(\\]\\])']: [
     null,
-    "gray",
-    "gray",
-    "lightBlue",
-    "gray",
+    'gray',
+    'gray',
+    'lightBlue',
+    'gray',
   ],
-  ["(\\s|^)(#)([^\\s#`,]+)"]: [null, "gray", "lightBlue"],
+  ['(\\s|^)(#)([^\\s#`,]+)']: [null, 'gray', 'lightBlue'],
 };
 
 function getDecorations(document: TextDocument) {
@@ -46,7 +46,7 @@ function getDecorations(document: TextDocument) {
     .forEach((lineText, lineNum) => {
       Object.keys(regexToDecorationTypes).forEach((reText) => {
         const decorTypeNames = regexToDecorationTypes[reText];
-        const regex = new RegExp(reText, "g");
+        const regex = new RegExp(reText, 'g');
 
         let match: RegExpExecArray | null;
         while ((match = regex.exec(lineText)) !== null) {

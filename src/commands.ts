@@ -1,6 +1,6 @@
-import { commands, ExtensionContext, Uri, window, workspace } from "vscode";
-import { EXTENSION_NAME } from "./config";
-import { store, updateWiki } from "./store";
+import { commands, ExtensionContext, Uri, window, workspace } from 'vscode';
+import { EXTENSION_NAME } from './config';
+import { store, updateWiki } from './store';
 
 function stringToByteArray(value: string): Uint8Array {
   return new TextEncoder().encode(value);
@@ -13,7 +13,7 @@ function createWikiPage(path: string, oFilePath: string) {
     title = path.slice(pos + 1);
   }
 
-  let fileHeading = `# ${title}
+  const fileHeading = `# ${title}
 
 `;
   const pageUri = Uri.joinPath(window.activeTextEditor!.document.uri, removeLeadingSlash(oFilePath));
@@ -26,7 +26,7 @@ function removeLeadingSlash(oFilePath: string) {
 }
 
 function sanitizeName(name: string) {
-  return name.replace(/\s/g, "-");//.replace(/[^\w\d-_]/g, "");
+  return name.replace(/\s/g, '-');//.replace(/[^\w\d-_]/g, '');
 }
 function getPageFilePath(link: string) {
   let name = link;
@@ -35,8 +35,8 @@ function getPageFilePath(link: string) {
     name = link.slice(0,pos).trim();
   }
   let fileName = sanitizeName(name).toLocaleLowerCase();
-  if (!fileName.endsWith(".md")) {
-    fileName += ".md";
+  if (!fileName.endsWith('.md')) {
+    fileName += '.md';
   }
   return fileName;
 }

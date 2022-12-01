@@ -1,11 +1,11 @@
-import * as minimatch from "minimatch";
-import { observable, runInAction } from "mobx";
-import { Uri, workspace, window } from "vscode";
-import { WikiPage } from "./wiki-page";
-import { config } from "../config";
+import * as minimatch from 'minimatch';
+import { observable, runInAction } from 'mobx';
+import { Uri, workspace, window } from 'vscode';
+import { WikiPage } from './wiki-page';
+import { config } from '../config';
 import {
   retrieveParentPath,
-} from "../utils";
+} from '../utils';
 
 export const store = observable({
   isLoading: true,
@@ -19,7 +19,7 @@ function areEqualUris(uri: Uri, otherUri: Uri) {
 
 async function updateResources() {
   const ignoredFiles = getIgnoredFiles();
-  const uris = await workspace.findFiles(`**​/*.{png,jpg,jpeg,PNG,JPG,JPEG}`, ignoredFiles, 500);
+  const uris = await workspace.findFiles('**​/*.{png,jpg,jpeg,PNG,JPG,JPEG}', ignoredFiles, 500);
 
   store.resources = uris.map((uri) =>  '/' + workspace.asRelativePath(uri, false));
 }
@@ -30,11 +30,11 @@ export async function initializeWiki() {
   updateWiki();
   updateResources();
 
-  const watcher = workspace.createFileSystemWatcher(`**/**.md`);
+  const watcher = workspace.createFileSystemWatcher('**/**.md');
 
   watcher.onDidCreate(async (uri) => {
     if (
-      uri.scheme === "vscode-userdata" ||
+      uri.scheme === 'vscode-userdata' ||
       minimatch(uri.path, getIgnoredFiles())
     ) {
       return;
@@ -57,7 +57,7 @@ export async function initializeWiki() {
 
   watcher.onDidDelete(async (uri) => {
     // TODO: Scope changes to the current workspace
-    if (uri.scheme === "vscode-userdata") {
+    if (uri.scheme === 'vscode-userdata') {
       return;
     }
 
@@ -82,7 +82,7 @@ export async function initializeWiki() {
   });
 
   watcher.onDidChange(async (uri) => {
-    if (uri.scheme === "vscode-userdata") {
+    if (uri.scheme === 'vscode-userdata') {
       return;
     }
 
@@ -97,11 +97,8 @@ export async function initializeWiki() {
 }
 
 export async function updateWiki() {
-  // TODO: Figure out how to find non-committed
-  // files in github.dev
-
   const ignoredFiles = getIgnoredFiles();
-  const pageUris = await workspace.findFiles(`**/*.md`, ignoredFiles, 500);
+  const pageUris = await workspace.findFiles('**/*.md', ignoredFiles, 500);
 
   const pages = pageUris.map((uri) => WikiPage.fromUri(uri));
   store.pages = pages;
@@ -119,7 +116,7 @@ function getPage(uri: Uri) {
 
 
 function getIgnoredFiles() {
-  return `{${config.ignoredFiles.join(",")}}`;
+  return `{${config.ignoredFiles.join(',')}}`;
 }
 
 async function updatePageBacklinks(page: WikiPage) {
@@ -141,7 +138,7 @@ async function updatePageBacklinks(page: WikiPage) {
     }
     const currentPath =  '/' + workspace.asRelativePath(window.activeTextEditor!.document.uri, false); 
     const currentParent = retrieveParentPath(currentPath);
-    for (let link of newLinks) {
+    for (const link of newLinks) {
       const page = getPageFromLink(link.title, currentParent);
       if (page) {
         if (!page.backLinks) {
@@ -156,7 +153,7 @@ async function updatePageBacklinks(page: WikiPage) {
 export function getPageFromLink(link: string, basePath: string): WikiPage {
   const path = link.startsWith('/') ? link : basePath + '/' + link;
   return store.pages.find(
-    (page: WikiPage) => page.path.replace(".md", "") === path
+    (page: WikiPage) => page.path.replace('.md', '') === path
   )!;
 }
 

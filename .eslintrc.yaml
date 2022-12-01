@@ -1,0 +1,34 @@
+env:
+  es6: true
+  node: true
+parser: "@typescript-eslint/parser"
+parserOptions:
+  sourceType: module
+plugins:
+  - "@typescript-eslint"
+extends:
+  - "eslint:recommended"
+  - "plugin:@typescript-eslint/recommended"
+rules:
+## -------------Company Rules Start ---------------
+  ## Coding style
+  no-nested-ternary: "error"
+  quotes: ["error", "single",{ "avoidEscape": true }]
+  comma-style: ["warn", "last"]
+  no-mixed-spaces-and-tabs: "error"
+  no-trailing-spaces: "warn"
+  no-multi-str: "error"
+  semi: ["warn", "always"]
+  ## Error-prone
+  eqeqeq: ["error", "smart"]
+  no-func-assign: "error"
+  no-prototype-builtins: "error"
+  no-redeclare: "error"
+  no-sequences: "error"
+  no-unreachable: "error"
+  # no-unused-vars: ["error", {args: "all", rgsIgnorePattern: "^_"}]
+  no-unused-vars": "off"
+  ? "@typescript-eslint/no-unused-vars"
+  : error
+## -------------Company Rules End ---------------
+

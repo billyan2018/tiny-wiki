@@ -7,18 +7,18 @@ import {
   Range,
   TextDocument,
   workspace
-} from "vscode";
-import { EXTENSION_NAME } from "../config";
-import { getPageFromLink, store } from "../store";
-import { WikiPage } from "../store/wiki-page";
+} from 'vscode';
+import { EXTENSION_NAME } from '../config';
+import { getPageFromLink, store } from '../store';
+import { WikiPage } from '../store/wiki-page';
 import {
   LINK_SELECTOR,
 
   retrieveParentPath
-} from "../utils";
+} from '../utils';
 
-export const LINK_PREFIX = "[[";
-export const LINK_SUFFIX = "]]";
+export const LINK_PREFIX = '[[';
+export const LINK_SUFFIX = ']]';
 
 const RX_IMAGE = /\[(.*)\]\((.*)\)/;
 class WikiLinkCompletionProvider implements CompletionItemProvider {
@@ -59,7 +59,6 @@ class WikiLinkCompletionProvider implements CompletionItemProvider {
       return;
     }
 
-
     const wikipages = store.pages.filter(
       (page: WikiPage) => page.uri.toString() !== document.uri.toString()
     );
@@ -79,15 +78,15 @@ class WikiLinkCompletionProvider implements CompletionItemProvider {
       // Automatically save the document upon selection
       // in order to update the backlinks in the tree.
       item.command = {
-        command: "workbench.action.files.save",
-        title: "Reference document",
+        command: 'workbench.action.files.save',
+        title: 'Reference document',
       };
       return item;
     });
 
     if (!getPageFromLink(link, currentParent)) {
       const newDocumentItem = new CompletionItem(link, CompletionItemKind.File);
-      newDocumentItem.detail = `Create new page page "${link}"`;
+      newDocumentItem.detail = `Create new page page '${link}'`;
 
       // Since we're dynamically updating the range as the user types,
       // we need to ensure the range spans the enter document name.
@@ -100,7 +99,7 @@ class WikiLinkCompletionProvider implements CompletionItemProvider {
       // automatically create the new document.
       newDocumentItem.command = {
         command: `${EXTENSION_NAME}._createWikiPage`,
-        title: "Create new page",
+        title: 'Create new page',
         arguments: [link],
       };
 
@@ -112,7 +111,7 @@ class WikiLinkCompletionProvider implements CompletionItemProvider {
 }
 
 // TODO: Figure out why word characters don't trigger completion
-let triggerCharacters = [...Array(94).keys()].map((i) =>
+const triggerCharacters = [...Array(94).keys()].map((i) =>
   String.fromCharCode(i + 32)
 );
 

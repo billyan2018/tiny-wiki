@@ -1,5 +1,5 @@
 export const LINK_PATTERN =
-  /(?:\s|^)((?:[#\!]?\[\[)(?<page>[^\]`]+)(?:\]\])|#(?<tag>[^\s#`,]+))/gim;
+  /(?:\s|^)((?:[#!]?\[\[)(?<page>[^\]`]+)(?:\]\])|#(?<tag>[^\s#`,]+))/gim;
 
 export interface WikiLink {
   title: string;

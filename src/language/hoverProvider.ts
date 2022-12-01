@@ -9,10 +9,10 @@ import {
   Uri,
   window,
   workspace,
-} from "vscode";
-import { getPageFromLink } from "../store";
-import { findLinks } from "../store/wiki-link";
-import { LINK_SELECTOR, retrieveParentPath } from "../utils";
+} from 'vscode';
+import { getPageFromLink } from '../store';
+import { findLinks } from '../store/wiki-link';
+import { LINK_SELECTOR, retrieveParentPath } from '../utils';
 
 class LinkHoverProvider implements HoverProvider {
   public provideHover(document: TextDocument, position: Position) {

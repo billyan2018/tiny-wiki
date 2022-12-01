@@ -10,14 +10,14 @@ import {
   Uri,
   window,
   workspace
-} from "vscode";
-import { store } from "../store";
-import { WikiPage, WikiPageBackLink } from "../store/wiki-page";
-import { isWikiDocument } from "../utils";
-import { config } from "../config";
+} from 'vscode';
+import { store } from '../store';
+import { WikiPage, WikiPageBackLink } from '../store/wiki-page';
+import { isWikiDocument } from '../utils';
+import { config } from '../config';
 
 const AUTHOR = Object.freeze({
-  name: "Backlinks:",
+  name: 'Backlinks:',
   iconPath: Uri.parse(config.logoUrl),
 });
 
@@ -30,7 +30,7 @@ export class WikiBacklinksComments implements Comment {
     const content = backlinks
       .map((link) =>renderBackLink(link)
       )
-      .join("\r\n");
+      .join('\r\n');
 
     const markdown = new MarkdownString(content);
     markdown.isTrusted = true;
@@ -93,8 +93,8 @@ export function registerCommentController() {
       controller = undefined;
     }
     controller = comments.createCommentController(
-      "tiny-wiki.backlinks",
-      "tiny-wiki"
+      'tiny-wiki.backlinks',
+      'tiny-wiki'
     );
     const comment = new WikiBacklinksComments(page.backLinks);
     const thread = controller.createCommentThread(
@@ -103,7 +103,7 @@ export function registerCommentController() {
       [comment]
     );
 
-    thread.label = "tiny-wiki";
+    thread.label = 'tiny-wiki';
     thread.canReply = false;
     thread.collapsibleState = CommentThreadCollapsibleState.Expanded;
 
