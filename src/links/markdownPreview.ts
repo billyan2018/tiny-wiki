@@ -1,4 +1,4 @@
-import * as vscode from 'vscode';
+import { window, workspace} from 'vscode';
 
 import { isWikiDocument, retrieveParentPath } from '../utils';
 import { getPageFromLink, getUriFromLink } from '../store';
@@ -7,7 +7,7 @@ import * as markdownit from 'markdown-it';
 
 
 export function extendMarkdownIt(md: any) {
-  const currentPath =  '/' + vscode.workspace.asRelativePath(vscode.window.activeTextEditor!.document.uri, false); 
+  const currentPath =  '/' + workspace.asRelativePath(window.activeTextEditor!.document.uri, false);
   const currentParent = retrieveParentPath(currentPath);
   return md
     // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -15,7 +15,7 @@ export function extendMarkdownIt(md: any) {
       name: 'tiny-wiki-links',
       regex: /(?<!)(?:\[\[)([^\]]+?)(?:\]\])/,
       replace: (olink: string) => {
-        if (!isWikiDocument(vscode.window.activeTextEditor!.document)) {
+        if (!isWikiDocument(window.activeTextEditor!.document)) {
           return;
         }
         let link = olink;
@@ -37,7 +37,7 @@ export function extendMarkdownIt(md: any) {
       name: 'tiny-wiki-embeds',
       regex: /(?:!\[\[)([^\]]+?)(?:\]\])/,
       replace: (link: string) => {
-        if (!isWikiDocument(vscode.window.activeTextEditor!.document)) {
+        if (!isWikiDocument(window.activeTextEditor!.document)) {
           return;
         }
 

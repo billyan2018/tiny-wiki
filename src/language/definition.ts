@@ -3,9 +3,10 @@ import {
     languages,
     LocationLink,
     Position, Range,
-    TextDocument
+    TextDocument,
+    workspace,
+    window
 } from 'vscode';
-import * as vscode from 'vscode';
 import { EXTENSION_NAME } from '../config';
 import { LINK_SELECTOR, retrieveParentPath, withProgress } from '../utils';
 import { LINK_PATTERN } from '../store/wiki-link';
@@ -17,13 +18,16 @@ function findLink(doc: TextDocument, pos: Position) {
     while ((match = LINK_PATTERN.exec(lineText))) {
         const start = match.index;
         const stop = start + match[0].length;
+        if (match.groups == null) {
+            continue;
+        }
         if (pos.character >= start && pos.character <= stop) {
             return {
                 range: new Range(
                     new Position(pos.line, start),
                     new Position(pos.line, stop)
                 ),
-                title: match.groups!.page || match.groups!.tag
+                title: match.groups.page || match.groups.tag
             };
         }
     }
@@ -36,7 +40,10 @@ class WikiDefinitionProvider implements DefinitionProvider {
         position: Position,
         cancel: CancellationToken
     ): Promise<LocationLink[] | undefined> {
-        const currentPath =  '/' + vscode.workspace.asRelativePath(vscode.window.activeTextEditor!.document.uri, false); 
+        if (window.activeTextEditor == null) {
+            return;
+        }
+        const currentPath =  '/' + workspace.asRelativePath(window.activeTextEditor.document.uri, false);
         const currentParent = retrieveParentPath(currentPath);
         const link = findLink(document, position);
         if (link) {
@@ -46,6 +53,9 @@ class WikiDefinitionProvider implements DefinitionProvider {
                     commands.executeCommand(`${EXTENSION_NAME}._createWikiPage`, link.title)
                 );
                 page = getPageFromLink(link.title, currentParent);
+            }
+            if (page == null) {
+                return;
             }
             const target = page.uri;
             return cancel.isCancellationRequested ? undefined : [{

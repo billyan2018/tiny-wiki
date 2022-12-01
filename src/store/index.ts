@@ -73,7 +73,7 @@ export async function initializeWiki() {
     );
 
     for (const page of linkedPages) {
-      page.backLinks = page.backLinks!.filter(
+      page.backLinks = page.backLinks?.filter(
         (link) => !areEqualUris(link.location.uri, uri)
       );
     }
@@ -120,6 +120,7 @@ function getIgnoredFiles() {
 }
 
 async function updatePageBacklinks(page: WikiPage) {
+
   const linkedPages = store.pages.filter(
     (linkedPage) =>
       linkedPage.backLinks &&
@@ -132,11 +133,14 @@ async function updatePageBacklinks(page: WikiPage) {
 
   runInAction(() => {
     for (const linkedPage of linkedPages) {
-      linkedPage.backLinks = linkedPage.backLinks!.filter(
+      linkedPage.backLinks = linkedPage.backLinks?.filter(
         (link) => !areEqualUris(link.location.uri, page.uri)
       );
     }
-    const currentPath =  '/' + workspace.asRelativePath(window.activeTextEditor!.document.uri, false); 
+    if (window.activeTextEditor == null) {
+      return;
+    }
+    const currentPath =  '/' + workspace.asRelativePath(window.activeTextEditor.document.uri, false);
     const currentParent = retrieveParentPath(currentPath);
     for (const link of newLinks) {
       const page = getPageFromLink(link.title, currentParent);
@@ -150,11 +154,11 @@ async function updatePageBacklinks(page: WikiPage) {
   });
 }
 
-export function getPageFromLink(link: string, basePath: string): WikiPage {
+export function getPageFromLink(link: string, basePath: string): WikiPage| undefined {
   const path = link.startsWith('/') ? link : basePath + '/' + link;
   return store.pages.find(
     (page: WikiPage) => page.path.replace('.md', '') === path
-  )!;
+  );
 }
 
 export function getUriFromLink(link: string, basePath: string) {

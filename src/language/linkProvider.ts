@@ -41,7 +41,10 @@ class WikiDocumentLinkProvider implements DocumentLinkProvider {
 
   // eslint-disable-next-line
   async resolveDocumentLink(link: WikiDocumentLink, token: CancellationToken) {
-    const currentPath =  '/' + vscode.workspace.asRelativePath(vscode.window.activeTextEditor!.document.uri, false); 
+    if (vscode.window.activeTextEditor == null) {
+      return;
+    }
+    const currentPath =  '/' + vscode.workspace.asRelativePath(vscode.window.activeTextEditor.document.uri, false);
     const currentParent = retrieveParentPath(currentPath);
     let page = getPageFromLink(link.title, currentParent);
     if (!page) {
@@ -50,7 +53,9 @@ class WikiDocumentLinkProvider implements DocumentLinkProvider {
       );
       page = getPageFromLink(link.title, currentParent);
     }
-
+    if (page == null) {
+      return;
+    }
     link.target = page.uri;
     return link;
   }

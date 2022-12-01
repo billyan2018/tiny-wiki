@@ -12,7 +12,10 @@ export interface WikiLink {
 export function* findLinks(contents: string): Generator<WikiLink> {
   let match;
   while ((match = LINK_PATTERN.exec(contents))) {
-    const title = match.groups!.page || match.groups!.tag;
+    if (match.groups == null) {
+      continue;
+    }
+    const title = match.groups.page || match.groups.tag;
     const start = match.index;
     const end = start + match[0].length;
     const contentStart = start + match[0].indexOf(title);

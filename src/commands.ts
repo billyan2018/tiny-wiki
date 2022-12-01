@@ -6,6 +6,9 @@ function stringToByteArray(value: string): Uint8Array {
   return new TextEncoder().encode(value);
 }
 function createWikiPage(path: string, oFilePath: string) {
+  if (window.activeTextEditor == null) {
+    return;
+  }
 
   let title = path;
   const pos = path.lastIndexOf('/');
@@ -16,7 +19,7 @@ function createWikiPage(path: string, oFilePath: string) {
   const fileHeading = `# ${title}
 
 `;
-  const pageUri = Uri.joinPath(window.activeTextEditor!.document.uri, removeLeadingSlash(oFilePath));
+  const pageUri = Uri.joinPath(window.activeTextEditor.document.uri, removeLeadingSlash(oFilePath));
 
   return workspace.fs.writeFile(pageUri, stringToByteArray(fileHeading));
 }

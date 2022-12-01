@@ -105,7 +105,10 @@ export function registerLinkDecorator() {
 
   workspace.onDidChangeTextDocument((event) => {
     const editor = window.activeTextEditor;
-    if (!isWikiDocument(editor!.document)) {
+    if (editor == null) {
+      return;
+    }
+    if (!isWikiDocument(editor.document)) {
       return;
     }
 

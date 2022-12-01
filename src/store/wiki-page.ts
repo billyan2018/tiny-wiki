@@ -16,7 +16,13 @@ export class WikiPage {
       if (path.endsWith('.md')) {
         path = path.substring(0, path.length - '.md'.length);
       }
-      return new WikiPage(uri, path, path.split('/').pop()!.replace('.md', ''));
+      let name = path;
+      const pos = path.lastIndexOf('/');
+      if (pos > 0) {
+        name = path.slice(0, pos);
+      }
+      name = name.replace('.md', '');
+      return new WikiPage(uri, path, name);
   }
 
   async getBackLinks() {

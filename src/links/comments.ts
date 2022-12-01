@@ -41,12 +41,14 @@ export class WikiBacklinksComments implements Comment {
   }
 }
 
-function renderBackLink(link: WikiPageBackLink) {
+function renderBackLink(link: WikiPageBackLink): string {
   const page = store.pages?.find(
     (page: WikiPage) => page.uri.toString() === link.location.uri.toString()
   );
-
-  const title = page!.path;
+  if (page == null) {
+    return '';
+  }
+  const title = page.path;
   const args = [
     link.location.uri,
     {

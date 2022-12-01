@@ -36,7 +36,7 @@ class WikiLinkCompletionProvider implements CompletionItemProvider {
     }
     const imageTagPos = lineText.search(RX_IMAGE);
     if (imageTagPos !== -1) {
-      const currentPath =  '/' + workspace.asRelativePath(document.uri, false); 
+      const currentPath =  '/' + workspace.asRelativePath(document.uri, false);
       const currentParent = retrieveParentPath(currentPath);
       return store.resources.map((path) => {
         let itemPath = path;
@@ -63,7 +63,7 @@ class WikiLinkCompletionProvider implements CompletionItemProvider {
       (page: WikiPage) => page.uri.toString() !== document.uri.toString()
     );
 
-    const currentPath =  '/' + workspace.asRelativePath(document.uri, false); 
+    const currentPath =  '/' + workspace.asRelativePath(document.uri, false);
     const currentParent = retrieveParentPath(currentPath);
     const documentItems = wikipages.map((wikipage) => {
       let itemPath = wikipage.path;

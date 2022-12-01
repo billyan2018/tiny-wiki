@@ -16,7 +16,10 @@ import { LINK_SELECTOR, retrieveParentPath } from '../utils';
 
 class LinkHoverProvider implements HoverProvider {
   public provideHover(document: TextDocument, position: Position) {
-    const currentPath =  '/' + workspace.asRelativePath(window.activeTextEditor!.document.uri, false); 
+    if (window.activeTextEditor == null) {
+      return;
+    }
+    const currentPath =  '/' + workspace.asRelativePath(window.activeTextEditor.document.uri, false);
     const currentParent = retrieveParentPath(currentPath);
     const line = document.lineAt(position).text;
     const links = [...findLinks(line)];
@@ -42,14 +45,18 @@ class LinkHoverProvider implements HoverProvider {
     }
   }
   proceedLinks(text: string, pagePath: string): string {
+
     const basePath = retrieveParentPath(pagePath);
     return text.replace(/\[(.*)\]\((.*)\)/, (url) => {
       const posStart = url.indexOf('(');
       const posEnd = url.indexOf(')');
       const link = url.slice(posStart + 1, posEnd);
       const path = link.startsWith('/') ? link : basePath + '/' + link;
+      if (workspace.workspaceFolders == null ) {
+        return '';
+      }
       const imageUri = Uri.joinPath(
-        workspace.workspaceFolders![0].uri, path).toString();
+        workspace.workspaceFolders[0].uri, path).toString();
       return `[](${imageUri})`;
     });
 
