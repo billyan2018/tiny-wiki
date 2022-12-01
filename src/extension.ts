@@ -1,4 +1,4 @@
-import * as vscode from 'vscode';
+import { workspace, commands, ExtensionContext } from 'vscode';
 import { registerCommands } from './commands';
 import { config } from './config';
 import { registerLinkCompletionProvider } from './language/completionProvider';
@@ -11,9 +11,9 @@ import { extendMarkdownIt } from './links/markdownPreview';
 import { initializeWiki } from './store';
 
 function initialize() {
-  const workspace = vscode.workspace.workspaceFolders?.[0];
-  if (workspace && config.enabled) {
-    vscode.commands.executeCommand(
+  const currentWorkspace = workspace.workspaceFolders?.[0];
+  if (currentWorkspace && config.enabled) {
+    commands.executeCommand(
       'setContext',
       'tiny-wiki:isWikiWorkspace',
       true
@@ -21,7 +21,7 @@ function initialize() {
 
     initializeWiki();
   } else {
-    vscode.commands.executeCommand(
+    commands.executeCommand(
       'setContext',
       'tiny-wiki:isWikiWorkspace',
       false
@@ -29,7 +29,7 @@ function initialize() {
   }
 }
 
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: ExtensionContext) {
   registerCommands(context);
   registerLinkDecorator();
   registerHoverProvider();
@@ -38,7 +38,7 @@ export function activate(context: vscode.ExtensionContext) {
   registerDefinitionProvider();
   registerCommentController();
 
-  vscode.workspace.onDidChangeConfiguration((e) => {
+  workspace.onDidChangeConfiguration((e) => {
     if (e.affectsConfiguration('tiny-wiki.enabled')) {
       initialize();
     }

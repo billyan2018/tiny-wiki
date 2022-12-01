@@ -20,7 +20,7 @@ import {
 export const LINK_PREFIX = '[[';
 export const LINK_SUFFIX = ']]';
 
-const RX_IMAGE = /\[(.*)\]\((.*)\)/;
+const RX_IMAGE = /\[(.*)\]\((.*)/;
 class WikiLinkCompletionProvider implements CompletionItemProvider {
   provideCompletionItems(
     document: TextDocument,
@@ -38,7 +38,11 @@ class WikiLinkCompletionProvider implements CompletionItemProvider {
     if (imageTagPos !== -1) {
       const currentPath =  '/' + workspace.asRelativePath(document.uri, false);
       const currentParent = retrieveParentPath(currentPath);
-      return store.resources.map((path) => {
+      const posOfBraket = lineText.lastIndexOf('(');
+      const part = lineText.slice(posOfBraket + 1);
+      const items = store.resources
+      .filter((path)=> path.includes(part))
+      .map((path) => {
         let itemPath = path;
         if (itemPath.startsWith(currentParent)) {
           itemPath = itemPath.substring(currentParent.length + 1);
@@ -48,6 +52,7 @@ class WikiLinkCompletionProvider implements CompletionItemProvider {
           CompletionItemKind.File
         );
       });
+      return items;
     }
   }
   completeLink(document: TextDocument,

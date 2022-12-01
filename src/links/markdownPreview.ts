@@ -5,9 +5,13 @@ import { getPageFromLink, getUriFromLink } from '../store';
 
 import * as markdownit from 'markdown-it';
 
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function extendMarkdownIt(md: any) {
-  const currentPath =  '/' + workspace.asRelativePath(window.activeTextEditor!.document.uri, false);
+  if (window.activeTextEditor == null) {
+    return;
+  }
+  const document = window.activeTextEditor.document;
+  const currentPath =  '/' + workspace.asRelativePath(document.uri, false);
   const currentParent = retrieveParentPath(currentPath);
   return md
     // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -15,7 +19,7 @@ export function extendMarkdownIt(md: any) {
       name: 'tiny-wiki-links',
       regex: /(?<!)(?:\[\[)([^\]]+?)(?:\]\])/,
       replace: (olink: string) => {
-        if (!isWikiDocument(window.activeTextEditor!.document)) {
+        if (!isWikiDocument(document)) {
           return;
         }
         let link = olink;
@@ -37,21 +41,21 @@ export function extendMarkdownIt(md: any) {
       name: 'tiny-wiki-embeds',
       regex: /(?:!\[\[)([^\]]+?)(?:\]\])/,
       replace: (link: string) => {
-        if (!isWikiDocument(window.activeTextEditor!.document)) {
-          return;
-        }
-
         console.log('GW Displaying link');
 
         const page = getPageFromLink(link, currentParent);
         if (page) {
           console.log('GW Got page: ', page);
-          //const markdown = require('markdown-it')();
+
           markdownit().renderer.rules.heading_open = (
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             tokens: any,
             index: number,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             options: any,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             env: any,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             self: any
           ) => {
             tokens[index].attrSet(

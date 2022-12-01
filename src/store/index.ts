@@ -19,7 +19,7 @@ function areEqualUris(uri: Uri, otherUri: Uri) {
 
 async function updateResources() {
   const ignoredFiles = getIgnoredFiles();
-  const uris = await workspace.findFiles('**​/*.{png,jpg,jpeg,PNG,JPG,JPEG}', ignoredFiles, 500);
+  const uris = await workspace.findFiles('**/*.{png,jpg,jpeg}', ignoredFiles, 1000);
 
   store.resources = uris.map((uri) =>  '/' + workspace.asRelativePath(uri, false));
 }
@@ -27,10 +27,11 @@ async function updateResources() {
 export async function initializeWiki() {
   store.isLoading = true;
 
-  updateWiki();
-  updateResources();
+  await updateResources();
+  await updateWiki();
 
-  const watcher = workspace.createFileSystemWatcher('**/**.md');
+
+  const watcher = workspace.createFileSystemWatcher('**/*.md');
 
   watcher.onDidCreate(async (uri) => {
     if (
@@ -98,7 +99,7 @@ export async function initializeWiki() {
 
 export async function updateWiki() {
   const ignoredFiles = getIgnoredFiles();
-  const pageUris = await workspace.findFiles('**/*.md', ignoredFiles, 500);
+  const pageUris = await workspace.findFiles('**/*.md', ignoredFiles, 2000);
 
   const pages = pageUris.map((uri) => WikiPage.fromUri(uri));
   store.pages = pages;
