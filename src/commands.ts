@@ -1,14 +1,22 @@
 import { commands, ExtensionContext, Uri, window, workspace } from 'vscode';
 import { EXTENSION_NAME } from './config';
+import { downloadPage } from './crewler/crewler';
 import { store, updateWiki } from './store';
+import { retrieveParentPath, stringToByteArray } from './utils';
 
-function stringToByteArray(value: string): Uint8Array {
-  return new TextEncoder().encode(value);
-}
-function createWikiPage(path: string, oFilePath: string) {
+
+function createWikiPageWithContent(oFilePath: string, content: string) {
   if (window.activeTextEditor == null) {
     return;
   }
+  const parentDir = retrieveParentPath(window.activeTextEditor.document.uri.fsPath);
+  const parentUrl = Uri.file(parentDir);
+  const pageUri = Uri.joinPath(parentUrl, removeLeadingSlash(oFilePath));
+
+  return workspace.fs.writeFile(pageUri, stringToByteArray(content));
+}
+
+function createWikiPage(path: string, oFilePath: string) {
 
   let title = path;
   const pos = path.lastIndexOf('/');
@@ -19,9 +27,7 @@ function createWikiPage(path: string, oFilePath: string) {
   const fileHeading = `# ${title}
 
 `;
-  const pageUri = Uri.joinPath(window.activeTextEditor.document.uri, removeLeadingSlash(oFilePath));
-
-  return workspace.fs.writeFile(pageUri, stringToByteArray(fileHeading));
+  return createWikiPageWithContent(oFilePath,fileHeading);
 }
 
 function removeLeadingSlash(oFilePath: string) {
@@ -66,6 +72,17 @@ export function registerCommands(context: ExtensionContext) {
     commands.registerCommand(`${EXTENSION_NAME}.refreshWiki`, async () => {
       store.isLoading = true;
       updateWiki();
+    })
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(`${EXTENSION_NAME}.downloadPage`, async () => {
+      const content = await downloadPage();
+      if (content == null) {
+        return;
+      }
+      //createWikiPageWithContent('test.md', content);
+      //await window.activeTextEditor?.document.save();
     })
   );
 }

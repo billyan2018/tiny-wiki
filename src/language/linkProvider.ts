@@ -7,8 +7,10 @@ import {
   Range,
   TextDocument,
   Uri,
+  window,
+  workspace
 } from 'vscode';
-import * as vscode from 'vscode';
+
 import { EXTENSION_NAME } from '../config';
 import {
   LINK_SELECTOR,
@@ -41,10 +43,10 @@ class WikiDocumentLinkProvider implements DocumentLinkProvider {
 
   // eslint-disable-next-line
   async resolveDocumentLink(link: WikiDocumentLink, token: CancellationToken) {
-    if (vscode.window.activeTextEditor == null) {
+    if (window.activeTextEditor == null) {
       return;
     }
-    const currentPath =  '/' + vscode.workspace.asRelativePath(vscode.window.activeTextEditor.document.uri, false);
+    const currentPath =  '/' + workspace.asRelativePath(window.activeTextEditor.document.uri, false);
     const currentParent = retrieveParentPath(currentPath);
     let page = getPageFromLink(link.title, currentParent);
     if (!page) {

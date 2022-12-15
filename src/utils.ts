@@ -34,3 +34,7 @@ export function retrieveParentPath(currentPath: string) {
   }
   return currentPath;
 }
+
+export function stringToByteArray(value: string): Uint8Array {
+  return new TextEncoder().encode(value);
+}

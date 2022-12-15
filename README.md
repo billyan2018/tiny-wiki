@@ -11,6 +11,9 @@ A **simple** yet powerful wiki/note-taking extension for vscode.
 ```
 Note: the path starts with the root of the workspace and use `/` as directory separator. Also, the extension of `md` will be eliminated.
 
+- Download any web page as a markdown file
+![](images/capture-as-md.gif)
+
 - Autocomplete the path of the markdown filename. Typing inside `[[]]` will trigger the wiki autocomplete:
 ![](./images/auto-complete.png)
 

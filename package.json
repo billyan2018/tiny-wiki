@@ -11,7 +11,7 @@
   "bugs": {
     "url": "https://github.com/billyan2018/tiny-wiki/issues"
   },
-  "version": "0.8.0",
+  "version": "1.2.0",
   "engines": {
     "vscode": "^1.73.0"
   },
@@ -25,53 +25,34 @@
   "contributes": {
     "commands": [
       {
-        "command": "tiny-wiki.addWikiPage",
-        "title": "Add Page",
-        "category": "tiny-wiki",
-        "icon": "$(add)"
-      },
-      {
-        "command": "tiny-wiki.deleteWikiPage",
-        "title": "Delete Page",
-        "category": "tiny-wiki"
-      },
-      {
         "command": "tiny-wiki.refreshWiki",
         "title": "Refresh",
         "category": "tiny-wiki",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "tiny-wiki.downloadPage",
+        "title": "Save a web page as markdown",
+        "category": "tiny-wiki",
+        "icon": "$(cloud-download)"
       }
     ],
     "menus": {
       "commandPalette": [
         {
-          "command": "tiny-wiki.addWikiPage",
+          "command": "tiny-wiki.refreshWiki",
           "when": "tiny-wiki:isWikiWorkspace"
         },
         {
-          "command": "tiny-wiki.deleteWikiPage",
-          "when": "false"
-        },
-        {
-          "command": "tiny-wiki.refreshWiki",
+          "command": "tiny-wiki.downloadPage",
           "when": "tiny-wiki:isWikiWorkspace"
         }
       ],
-      "view/item/context": [
+      "editor/title": [
         {
-          "command": "tiny-wiki.addWikiPage",
-          "when": "viewItem == tiny-wiki.directory",
-          "group": "inline@1"
-        },
-        {
-          "command": "tiny-wiki.addWikiPage",
-          "when": "viewItem == tiny-wiki.directory",
-          "group": "basic@1"
-        },
-        {
-          "command": "tiny-wiki.deleteWikiPage",
-          "when": "viewItem == tiny-wiki.page",
-          "group": "basic@1"
+          "command": "tiny-wiki.downloadPage",
+          "when": "tiny-wiki:isWikiWorkspace",
+          "group": "navigation"
         }
       ]
     },
@@ -100,6 +81,7 @@
     "markdown.markdownItPlugins": true
   },
   "scripts": {
+    "vsce": "vsce package",
     "vscode:prepublish": "npm run package",
     "compile": "webpack",
     "watch": "webpack --watch",
@@ -129,9 +111,11 @@
     "webpack-cli": "^4.10.0"
   },
   "dependencies": {
+    "@wcj/html-to-markdown": "^1.0.1",
     "markdown-it": "^13.0.1",
     "markdown-it-regex": "^0.2.0",
     "minimatch": "^3.0.4",
-    "mobx": "^6.3.2"
+    "mobx": "^6.3.2",
+    "node-fetch": "^3.3.0"
   }
 }
